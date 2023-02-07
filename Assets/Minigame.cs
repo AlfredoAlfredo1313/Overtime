@@ -7,4 +7,6 @@ using UnityEngine;
 public abstract class Minigame : MonoBehaviour 
 {
     public abstract Task completeCondition();
+
+    public abstract bool getComplete();
 }

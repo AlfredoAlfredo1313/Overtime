@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Min6DigitPassword : Minigame
 {
+    bool isComplete;
     public override async Task completeCondition()
     {
         throw new System.NotImplementedException();
@@ -20,5 +21,10 @@ public class Min6DigitPassword : Minigame
     void Update()
     {
         
+    }
+
+    public override bool getComplete()
+    {
+        return isComplete;
     }
 }

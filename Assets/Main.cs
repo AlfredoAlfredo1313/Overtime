@@ -12,6 +12,8 @@ public class Main : MonoBehaviour
     [SerializeField] List<Desk> Desks;
     [SerializeField] TextMeshPro text;
 
+    GameObject minigObject;
+
     int score = 0;
 
     public static Desk currDesk;
@@ -38,9 +40,20 @@ public class Main : MonoBehaviour
             selectIndex = (int)Random.Range(0f, 3f);
             desk = Desks[selectIndex];
 
-            
+            minigObject = sortMinigame();
+            Minigame minigame = minigObject.GetComponent<Minigame>();
             Debug.Log("Desk " + selectIndex + " selected");
-            score += await desk.activateDesk();
+            CancellationTokenSource tokenSource = new CancellationTokenSource();
+            CancellationToken token = tokenSource.Token;
+            tokenSource.CancelAfter(10000);
+            while(!minigame.getComplete()) {
+                await Task.Yield();
+                if(token.IsCancellationRequested)
+                {
+                    score = -100;
+                }
+            }      
+            tokenSource.Dispose();
             desk.deactivate();
             Debug.Log("Task Complete");
             await Task.Delay(5000);
@@ -60,5 +73,10 @@ public class Main : MonoBehaviour
         if(!currDesk.getActive()) return;
         currDesk.setComplete();
         Debug.Log("Interagiu");
+    }
+
+    GameObject sortMinigame()
+    {
+        return null;
     }
 }

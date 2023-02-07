@@ -24,25 +24,12 @@ public class Desk : MonoBehaviour
         
     }
 
-    public async Task<int> activateDesk()
+    public void activateDesk()
     {
-        int score = 500;
         isActive = true;
         complete = false;
         color = Color.blue;
         GetComponent<SpriteRenderer>().color = Color.blue;
-        CancellationTokenSource tokenSource = new CancellationTokenSource();
-        CancellationToken token = tokenSource.Token;
-        tokenSource.CancelAfter(10000);
-        while(!complete) {
-            await Task.Yield();
-            if(token.IsCancellationRequested)
-            {
-                score = -100;
-            }
-        }
-        tokenSource.Dispose();
-        return score;
     }
 
     public void deactivate()
