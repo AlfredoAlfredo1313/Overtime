@@ -33,12 +33,14 @@ public class Desk : MonoBehaviour
         GetComponent<SpriteRenderer>().color = Color.blue;
         CancellationTokenSource tokenSource = new CancellationTokenSource();
         CancellationToken token = tokenSource.Token;
-        tokenSource.CancelAfter(10000);
+        tokenSource.CancelAfter(5000);
         while(!complete) {
             await Task.Yield();
             if(token.IsCancellationRequested)
             {
+                Debug.Log("Time Out");
                 score = -100;
+                break;
             }
         }
         tokenSource.Dispose();
