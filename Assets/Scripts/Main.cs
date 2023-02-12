@@ -12,7 +12,11 @@ public class Main : MonoBehaviour
     [SerializeField] List<Desk> Desks;
     [SerializeField] TextMeshPro text;
 
-    GameObject minigObject;
+    [SerializeField] GameObject bluePrintMiniObj;
+
+    GameObject miniObj;
+
+    public static bool isComplete = false;
 
     int score = 0;
 
@@ -35,24 +39,18 @@ public class Main : MonoBehaviour
         Desk desk;
         while(true) {
             Debug.Log("Selecting new Desk");
-
             List<Desk> selectDesk = Desks.Where(n => !n.getActive()).ToList();
             selectIndex = (int)Random.Range(0f, 3f);
             desk = Desks[selectIndex];
-
-            minigObject = sortMinigame();
-            Minigame minigame = minigObject.GetComponent<Minigame>();
+            desk.activateDesk();
+            miniObj = Instantiate(bluePrintMiniObj);
+            miniObj.transform.GetChild(0).gameObject.SetActive(false);
+            Minigame minigame = miniObj.GetComponent<Minigame>();
             Debug.Log("Desk " + selectIndex + " selected");
             CancellationTokenSource tokenSource = new CancellationTokenSource();
-            CancellationToken token = tokenSource.Token;
-            tokenSource.CancelAfter(10000);
-            while(!minigame.getComplete()) {
-                await Task.Yield();
-                if(token.IsCancellationRequested)
-                {
-                    score = -100;
-                }
-            }      
+            tokenSource.CancelAfter(10000);     
+            score += await minigame.completeCondition(tokenSource.Token);
+            Destroy(miniObj);
             tokenSource.Dispose();
             desk.deactivate();
             Debug.Log("Task Complete");
@@ -71,7 +69,7 @@ public class Main : MonoBehaviour
     {
         if(currDesk == null) return;
         if(!currDesk.getActive()) return;
-        currDesk.setComplete();
+        miniObj.transform.GetChild(0).gameObject.SetActive(true);
         Debug.Log("Interagiu");
     }
 
